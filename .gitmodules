@@ -1,0 +1,3 @@
+[submodule "src/publicViews"]
+	path = src/publicViews
+	url = https://gitee.com/yangyang520_478/module.git
