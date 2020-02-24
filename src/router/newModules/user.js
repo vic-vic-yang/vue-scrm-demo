@@ -9,17 +9,14 @@ export default {
     title: 'userCenter',
     icon: 'user'
   },
-  alwaysShow: true,
   children: [
-    // 用户黑名单
     {
       path: 'userBlack',
       name: 'userBlack',
       component: () => import('@/views/userCenter/index'),
       meta: { title: 'userBlack', icon: 'black-user', noCache: true }
     },
-    // 用户管理
-    {
+    { // 用户管理
       path: 'user',
       component: blankLayout,
       meta: {
@@ -32,7 +29,7 @@ export default {
           path: 'index',
           component: () => import('@/views/contentPlatform/user/index'),
           name: 'userManagement',
-          meta: { title: 'userManager', icon: 'user', noCache: true, roles: ['11_3', 'admin'] }
+          meta: { title: 'userManagement', icon: 'user', noCache: true, roles: ['11_3', 'admin'] }
         },
         { // 用户详情
           path: 'userDetails/:id',
@@ -43,7 +40,6 @@ export default {
         }
       ]
     },
-    // 用户档案
     {
       path: 'usersGrowth',
       component: blankLayout,
@@ -51,7 +47,6 @@ export default {
         title: 'usersGrowth',
         icon: 'archive'
       },
-      alwaysShow: true,
       children: [
         {
           path: 'index',
@@ -102,12 +97,10 @@ export default {
         }
       ]
     },
-    // 积分管理
     {
       path: 'integralManage',
       component: blankLayout,
       meta: { title: 'integralManage', icon: 'score' },
-      alwaysShow: true,
       children: [
         {
           path: 'overview',
@@ -120,13 +113,6 @@ export default {
           component: () => import('@/views/integralMall/integral/index'),
           name: 'integralRule',
           meta: { title: 'integralRule', noCache: true }
-        },
-        {
-          path: 'details',
-          component: () => import('@/views/integralMall/integral/details'),
-          name: 'integralDetails',
-          meta: { title: 'integralDetails', noCache: true },
-          hidden: true
         }
       ]
     }

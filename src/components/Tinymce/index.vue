@@ -1,11 +1,8 @@
 <template>
   <div :class="{fullscreen:fullscreen}" class="tinymce-container editor-container">
     <textarea :placeholder="placeholder" :id="tinymceId" class="tinymce-textarea"></textarea>
-    <div class="editor-custom-btn-container video" :style="{'right':file_show?'216px':'110px'}" v-if="video_show">
+    <div class="editor-custom-btn-container video" v-if="video_show">
       <editorVideo color="#1890ff" class="editor-upload-btn" @successVideo="videoSuccessCBK"/>
-    </div>
-    <div class="editor-custom-btn-container video" v-if="file_show">
-      <editorVideo color="#1890ff" class="editor-upload-btn" accept="*" :is_video="false" @successVideo="fileUploadSuccessCBK"/>
     </div>
     <div :class="['editor-custom-btn-container-link', !uploadImgShow ? 'editor-custom-btn-container' : '']" v-show="miniLinkShow">
       <mini-link color="#1890ff" class="editor-upload-btn"  @successMiniLink="successMiniLink"/>
@@ -78,10 +75,6 @@
         default: () => []
       },
       video_show: {
-        type: Boolean,
-        default: false
-      },
-      file_show: {
         type: Boolean,
         default: false
       }
@@ -164,12 +157,6 @@
             editor.on('FullscreenStateChanged', (e) => {
               _this.fullscreen = e.state;
             });
-          },
-          images_upload_handler: function(blobInfo, success, failure) {
-            alert('2323');
-          },
-          insertimage_callback: cb => {
-            console.log('dsfsdfsdfsdfs');
           }
         });
       },
@@ -185,7 +172,6 @@
         window.tinymce.get(this.tinymceId).getContent();
       },
       imageSuccessCBK(arr) {
-        console.log('asdasdasd');
         const _this = this;
         arr.forEach(v => {
           window.tinymce.get(_this.tinymceId).insertContent(`<img class="wscnph" src="${v.url}" >`);
@@ -208,14 +194,7 @@
         console.log(arr);
         const _this = this;
         arr.forEach(v => {
-          window.tinymce.get(_this.tinymceId).insertContent(`<video class="wscnph" controls="controls" src="${v.url}" poster="${v.cover}"></video>`);
-        });
-      },
-      fileUploadSuccessCBK(arr) {
-        console.log(arr);
-        const _this = this;
-        arr.forEach(v => {
-          window.tinymce.get(_this.tinymceId).insertContent(`<a href="${v.url}">文件</a>`);
+          window.tinymce.get(_this.tinymceId).insertContent(`<video class="wscnph" controls="controls" src="${v.url}" ></video>`);
         });
       }
     }

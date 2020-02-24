@@ -5,8 +5,8 @@
         <el-form-item label="姓名">
           <el-input placeholder="姓名" v-model="userListQueryFrm.userName"></el-input>
         </el-form-item>
-        <el-form-item label="昵称">
-          <el-input placeholder="昵称" v-model="userListQueryFrm.nickname"></el-input>
+        <el-form-item label="微信昵称">
+          <el-input placeholder="微信昵称" v-model="userListQueryFrm.nickname"></el-input>
         </el-form-item>
         <el-form-item label="手机号">
           <el-input placeholder="手机号" v-model="userListQueryFrm.phone"></el-input>
@@ -58,7 +58,7 @@
             prop: 'name'
           },
           {
-            label: '昵称',
+            label: '微信昵称',
             prop: 'nickname'
           },
           {

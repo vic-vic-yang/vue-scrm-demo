@@ -1,7 +1,8 @@
 // 内容管理
 import Layout from '@/views/layout/Layout';
 import blankLayout from '@/views/layout/blankLayout';
-export default {
+export default
+{
   order: 1,
   orderName: 'newcontentPlatform',
   path: '/newcontentPlatform',
@@ -196,46 +197,6 @@ export default {
         }
       ]
     },
-    // 审核详情
-    {
-      path: 'contentApproval',
-      component: blankLayout,
-      meta: {
-        title: 'contentApprovalManagment'
-      },
-      children: [
-        {
-          path: 'index',
-          name: 'contentApprovalManagment',
-          component: () => import('@/views/contentPlatform/contentApproval/index'),
-          meta: { title: 'contentApprovalManagment', noCache: false}
-        },
-        {
-          path: ':id/:type/:t_id',
-          name: 'contentApproval',
-          component: () => import('@/views/contentPlatform/contentApproval/check'),
-          meta: { title: 'contentApproval', noCache: true },
-          hidden: true
-        }
-      ]
-    },
-    // 数据统计
-    {
-      path: 'contentStatistics',
-      component: blankLayout,
-      meta: {
-        title: 'contentStatisticsManagment'
-      },
-      alwaysShow: true,
-      children: [
-        {
-          path: 'index',
-          name: 'editStatistics',
-          component: () => import('@/views/contentPlatform/contentStatistics/index'),
-          meta: { title: 'editStatistics', noCache: true}
-        }
-      ]
-    },
     // 评论管理
     {
       path: 'commentCenter',
@@ -271,81 +232,113 @@ export default {
       children: [
         {
           path: 'eventCollection',
-          component: () => import('@/views/contentPlatform/calendar/eventCollection/list.vue'),
-          name: 'eventCollectionMagage',
-          meta: { title: 'eventCollectionMagage', noCache: true }
+          component: blankLayout,
+          meta: { title: 'eventCollectionMagage', noCache: true },
+          children: [
+            {
+              path: 'list',
+              component: () => import('@/views/contentPlatform/calendar/eventCollection/list.vue'),
+              name: 'eventCollectionMagage',
+              meta: { title: 'eventCollectionMagage', noCache: true }
+            },
+            {
+              path: 'create',
+              component: () => import('@/views/contentPlatform/calendar/eventCollection/edit.vue'),
+              name: 'createEventCollection',
+              meta: { title: 'createEventCollection', noCache: true },
+              hidden: true
+            },
+            {
+              path: ':id',
+              component: () => import('@/views/contentPlatform/calendar/eventCollection/edit.vue'),
+              name: 'modifyEventCollection',
+              meta: { title: 'modifyEventCollection', noCache: true },
+              hidden: true
+            }
+          ]
         },
         {
           path: 'event',
-          component: () => import('@/views/contentPlatform/calendar/event/list.vue'),
-          name: 'eventMagage',
-          meta: { title: 'eventMagage', noCache: true }
+          component: blankLayout,
+          meta: { title: 'eventMagage', noCache: true },
+          children: [
+            {
+              path: 'list',
+              component: () => import('@/views/contentPlatform/calendar/event/list.vue'),
+              name: 'eventMagage',
+              meta: { title: 'eventMagage', noCache: true }
+            },
+            {
+              path: 'create',
+              component: () => import('@/views/contentPlatform/calendar/event/edit.vue'),
+              name: 'createEvent',
+              meta: { title: 'createEvent', noCache: true },
+              hidden: true
+            },
+            {
+              path: ':id',
+              component: () => import('@/views/contentPlatform/calendar/event/edit.vue'),
+              name: 'modifyEvent',
+              meta: { title: 'modifyEvent', noCache: true },
+              hidden: true
+            }
+          ]
         },
         {
           path: 'eventPush',
-          component: () => import('@/views/contentPlatform/calendar/event/push.vue'),
-          name: 'eventPush',
-          meta: { title: 'eventPush', noCache: true }
+          component: blankLayout,
+          meta: { title: 'eventPush', noCache: true },
+          children: [
+            {
+              path: 'list',
+              component: () => import('@/views/contentPlatform/calendar/eventPush/list.vue'),
+              name: 'eventPush',
+              meta: { title: 'eventPush', noCache: true }
+            },
+            {
+              path: 'create',
+              component: () => import('@/views/contentPlatform/calendar/eventPush/edit.vue'),
+              name: 'createEventPush',
+              meta: { title: 'createEventPush', noCache: true },
+              hidden: true
+            },
+            {
+              path: ':id',
+              component: () => import('@/views/contentPlatform/calendar/eventPush/edit.vue'),
+              name: 'modifyEventPush',
+              meta: { title: 'modifyEventPush', noCache: true },
+              hidden: true
+            }
+          ]
         },
         {
           path: 'eventTags',
-          component: () => import('@/views/contentPlatform/calendar/eventTags/index.vue'),
-          name: 'eventTags',
-          meta: { title: 'eventTags', noCache: true }
+          component: blankLayout,
+          meta: { title: 'eventTags', noCache: true },
+          children: [
+            {
+              path: 'list',
+              component: () => import('@/views/contentPlatform/calendar/eventTags/list.vue'),
+              name: 'eventTags',
+              meta: { title: 'eventTags', noCache: true }
+            },
+            {
+              path: 'create',
+              component: () => import('@/views/contentPlatform/calendar/eventTags/edit.vue'),
+              name: 'createEventTags',
+              meta: { title: 'createEventTags', noCache: true },
+              hidden: true
+            },
+            {
+              path: ':id',
+              component: () => import('@/views/contentPlatform/calendar/eventTags/edit.vue'),
+              name: 'modifyEventTags',
+              meta: { title: 'modifyEventTags', noCache: true },
+              hidden: true
+            }
+          ]
         }
       ]
-    },
-    // 广告位管理
-    {
-      path: 'advertisingPosition',
-      component: blankLayout,
-      meta: { title: 'advertisingPositionManage', noCache: true },
-      children: [
-        {
-          path: 'list', // 广告位列表
-          component: () => import('@/views/advertisingPosition/list.vue'),
-          meta: { title: 'advertisingPositionManage', noCache: true },
-          name: 'advertisingPositionManage'
-        },
-        {
-          path: 'positionEdit', // 广告位编辑
-          component: () => import('@/views/advertisingPosition/positionEdit.vue'),
-          meta: { title: 'advertisingPositionEdit', noCache: true },
-          name: 'advertisingPositionEdit',
-          hidden: true
-        },
-        {
-          path: 'advertisingList', // 广告列表
-          component: () => import('@/views/advertisingPosition/advertisingList.vue'),
-          meta: { title: 'advertisingPositionAdvertisingList', noCache: true },
-          name: 'advertisingPositionAdvertisingList',
-          hidden: true
-        },
-        {
-          path: 'advertisingDetails', // 广告详情
-          component: () => import('@/views/advertisingPosition/advertisingDetails.vue'),
-          meta: { title: 'advertisingPositionAdvertisingDetails', noCache: true },
-          name: 'advertisingPositionAdvertisingDetails',
-          hidden: true
-        }
-      ]
-    },
-    // 数据统计分析
-    {
-      path: 'dataTotalAnalysis',
-      component: () => import('@/views/dataTotalAnalysis/index.vue'),
-      meta: { title: 'dataTotalAnalysis', noCache: true },
-      name: 'dataTotalAnalysis',
-      hidden: true
-    },
-    // 迷你导航
-    {
-      path: 'miniNavigation',
-      component: blankLayout,
-      name: 'miniNavigation',
-      meta: { title: 'miniNavigation', noCache: true },
-      alwaysShow: true,
-      children: []
     }
   ]
 };

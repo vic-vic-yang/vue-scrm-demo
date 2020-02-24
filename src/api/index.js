@@ -1,8 +1,7 @@
-import axios from 'axios';
-import { Message, MessageBox } from 'element-ui';
 import store from '@/store';
 import { getToken } from '@/utils/auth';
-import router from '@/router';
+import axios from 'axios';
+import { Message, MessageBox } from 'element-ui';
 
 const ErrDuration = 3 * 1000;
 
@@ -10,16 +9,6 @@ const api = axios.create({
   baseURL: process.env.BASE_API,
   timeout: 60 * 1000
 });
-
-/**
- axios.request（config）
- axios.get（url [，config]）
- axios.delete（url [，config]）
- axios.head（url [，config]）
- axios.post（url [，data [，config]]）
- axios.put（url [，data [，config]]）
- axios.patch（url [，data [，config]]）
- */
 
 const showResponseMessage = function(res) {
   const resData = res.data;
@@ -66,9 +55,6 @@ api.interceptors.request.use(config => {
     }
     config.headers['X-ACCESS-TOKEN'] = getToken();
   }
-  if (store.getters.language) {
-    config.headers['lang'] = store.getters.language;
-  }
   return config;
 }, error => {
   return Promise.reject(error);
@@ -96,18 +82,13 @@ api.interceptors.response.use(
     let errMsg = error.message;
     const resData = error.response.data;
     if (resData) {
-      errMsg = (resData.data && resData.data.errorMessage) || resData.errors[0] || resData.message;
+      errMsg = (resData.data && resData.data.errorMessage) || resData.message || resData.errors[0];
     }
     Message({
       message: errMsg,
       type: 'error',
       duration: ErrDuration
     });
-    if (resData && resData.code === 401) { // 401, token失效
-      store.dispatch('LogOut').then(() => {
-        router.push('/');
-      });
-    }
     return Promise.reject(error);
   });
 

@@ -2,10 +2,12 @@
  * @Description: In User Settings Edit
  * @Author: your name
  * @Date: 2019-01-16 17:43:24
- * @LastEditTime : 2019-12-26 10:09:28
- * @LastEditors  : Please set LastEditors
+ * @LastEditTime: 2019-11-25 10:22:12
+ * @LastEditors: Please set LastEditors
  */
 import menuZh from './menuZh';
+console.log('-------');
+console.log(menuZh);
 
 export default {
   route: {
@@ -110,7 +112,7 @@ export default {
     personnelManagement: '核销人员',
     personnelCreate: '新增核销人员',
     personnelModify: '编辑核销人员',
-    aldDataView: '阿拉丁平台数据分析',
+    dataView: '数据展示',
     dataViewSetting: '数据展示设置',
     dataViewModify: '数据展示设置',
     learningCenter: '学习中心',
@@ -124,7 +126,7 @@ export default {
     publicAddressManagement: '公众号授权',
     miniProgramManagement: '小程序授权',
     commentCenter: '评论管理',
-    commentManagment: '评论管理',
+    commentManagment: '评论流水',
     commentConfig: '评论配置',
     integralCenter: '积分中心',
     integralMall: '积分商城',
@@ -293,36 +295,22 @@ export default {
     newcontentPlatform: '内容中心',
     calendarManage: '日历管理',
     eventCollectionMagage: '事件集管理',
+    createEventCollection: '事件集管理',
+    modifyEventCollection: '编辑事件集',
     eventMagage: '事件管理',
     eventPush: '事件推送机制',
+    createEventPush: '新建事件推送机制',
+    modifyEventPush: '编辑事件推送机制',
+    createEvent: '新建事件',
+    modifyEvent: '编辑事件',
     eventTags: '事件标签',
-    advertisingPositionManage: '广告位管理',
-    advertisingPositionEdit: '广告位详情',
-    advertisingPositionAdvertisingList: '广告列表',
-    advertisingPositionAdvertisingDetails: '广告详情',
-    contentApprovalManagment: '内容审核',
-    contentApproval: '审核详情',
-    contentColumn: '内容栏目',
-    dataTotalAnalysis: '数据统计分析',
-    matchSolicitation: '赛事征集',
-    matchSloganList: '口号征集',
-    matchEmblemList: '会徽征集',
-    matchMascotList: '吉祥物征集',
-    matchBlessingList: '祝福征集',
-    matchOfficialList: '开闭幕式文案征集',
-    matchSolicitationDetails: '征集详情',
-    matchOfficialDetails: '征集详情',
-    matchCooperation: '赛事合作审核',
-    matchCooperationDetails: '审核详情',
-    contentCenterNew: '内容中心',
-    addContentNew: '内容编辑',
-    miniNavigation: '迷你导航',
-    competitionCenter: '比赛中心',
-    participateIn: '参与其中',
-    aboutUs: '关于我们',
-    logManage: '操作日志',
-    contentStatisticsManagment: '数据统计',
-    editStatistics: '编辑统计'
+    createEventTags: '新建事件标签',
+    modifyEventTags: '编辑事件标签',
+    schoolWiki: '学区百科',
+    schoolList: '学校',
+    schoolDetail: '学校详情',
+    schoolPartition: '划片分区',
+    houseList: '小区'
   },
   navbar: {
     logOut: '退出登录',

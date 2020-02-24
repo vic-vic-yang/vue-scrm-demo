@@ -6,8 +6,7 @@ import { getToken } from '@/utils/auth';
 const ErrDuration = 3 * 1000;
 
 const api = axios.create({
-  // baseURL: 'http://yapi.scrm.buerkongjian.com/mock/101/',
-  baseURL: 'http://yapi.scrm.buerkongjian.com/mock/134',
+  baseURL: 'http://yapi.scrm.buerkongjian.com/mock/101/',
   timeout: 60 * 1000
 });
 

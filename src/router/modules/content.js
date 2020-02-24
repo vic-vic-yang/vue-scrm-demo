@@ -1,7 +1,8 @@
 // 内容管理
 import Layout from '@/views/layout/Layout';
 import blankLayout from '@/views/layout/blankLayout';
-export default {
+export default
+{
   order: 12,
   path: '/contentPlatform',
   component: Layout,

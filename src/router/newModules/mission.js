@@ -9,7 +9,6 @@ export default {
     title: 'integralTask',
     icon: 'mission'
   },
-  alwaysShow: true,
   children: [
     {
       path: 'task',

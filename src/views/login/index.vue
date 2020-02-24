@@ -73,12 +73,10 @@
                  @click.native.prevent="handleLogin">{{$t('login.logIn')}}
       </el-button>
 
-      <!-- <div class="tips" style="padding:19px 0;">
-       
-      </div> -->
-      <div class="bt_view">
-        <el-button v-if="!isSupplier" class="thirdparty-button" type="primary" @click="changeLogin">{{ type == 0 ? '手机号码登录' : '账号登录' }}</el-button>
+      <div class="tips" style="padding:19px 0;">
+        <!--第三方登录-->
       </div>
+      <el-button v-if="!isSupplier" class="thirdparty-button" type="primary" @click="changeLogin">{{ type == 0 ? '手机号码登录' : '账号登录' }}</el-button>
 
     </el-form>
 
@@ -129,6 +127,8 @@
       }
     },
     created() {
+      console.log('created');
+      console.log(window.location.href);
       if (window.location.href && window.location.href.indexOf('supplier.scrm.buerkongjian.com') > -1) {
         this.isSupplier = true;
       }
@@ -221,13 +221,15 @@
       // 获取url参数
       getQueryParams() {
         const params = this.$route.query;
+        console.log(params);
         if (params.hasOwnProperty('id')) {
+          console.log('获取登录地址');
           this.getAuthUrl();
         } else if (params.code && params.signature) {
           console.log('授权登录');
           this.loginByAuth(params.code, params.signature);
         } else {
-          console.log(params);
+          console.log(params.code, params.signature);
         }
       },
       // 通过授权登录
@@ -270,7 +272,7 @@
         width: 100%;
       }
       &.code-input{
-        width: 75%;
+        width: 85%;
       }
       input {
         background: transparent;
@@ -294,7 +296,7 @@
     }
     .code-input-div{
       display: inline-block;
-      width: 55%;
+      width: 65%;
       border: 1px solid rgba(255, 255, 255, 0.1);
       background: rgba(0, 0, 0, 0.1);
       border-radius: 5px;
@@ -326,7 +328,7 @@
       position: absolute;
       left: 0;
       right: 0;
-      max-width: 520px;
+      width: 520px;
       padding: 35px 35px 15px 35px;
       margin: 120px auto;
     }
@@ -375,12 +377,10 @@
       cursor: pointer;
       user-select: none;
     }
-    .bt_view{
-      display: flex;
-      justify-content: flex-end
-    }
     .thirdparty-button {
-    
+      position: absolute;
+      right: 35px;
+      bottom: 28px;
     }
   }
 </style>

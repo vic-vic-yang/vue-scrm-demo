@@ -8,6 +8,7 @@
 /* Layout */
 import Layout from '@/views/layout/Layout';
 import { routes } from './newModules';
+console.log(routes);
 /** note: submenu only apppear when children.length>=1
  *   detail see  https://panjiachen.github.io/vue-element-admin-site/guide/essentials/router-and-nav.html
  **/

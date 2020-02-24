@@ -1,9 +1,6 @@
 import { asyncRouterMap, constantRouterMap } from '@/router/routes';
 import { getUserRoles } from '@/api/login';
-import columnsApi from '@/api/contentPlatform/columns';
-import MININAVIGATION from '@/api/contentPlatform/miniNavigation';
-import { appendContentColumnMenu } from '@/router/columnRoutes';
-import { appendMiniNavMenu } from '@/router/miniNav';
+
 /**
  * 通过meta.title判断是否与当前用户权限匹配
  * @param roles
@@ -19,13 +16,7 @@ function hasPermission(roles, route) {
     return true;
   }
   if (route.meta && route.meta.title) {
-    const has = Object.keys(roles).some(key => route.meta.title === key);
-    if (has) {
-      return true;
-    }
-  }
-  if (route.name) {
-    return Object.keys(roles).some(key => route.name === key);
+    return Object.keys(roles).some(key => route.meta.title === key);
   }
 }
 
@@ -34,79 +25,33 @@ function hasPermission(roles, route) {
  * @param asyncRouterMap
  * @param roles
  */
-function filterAsyncRouter(asyncRouterMap, roles, operates) {
-  const leafAuditMap = getOperatePermissionMap(operates);
-  const filterAsyncRouterRec = function(asyncRouterMap, roles) {
-    return asyncRouterMap.filter(route => {
-      if (hasPermission(roles, route)) {
-        if (route.children && route.children.length) {
-          route.children = filterAsyncRouterRec(route.children, roles);
-        } else {
-          // 根节点
-          if (route.name) {
-            // 用户有叶子节点权限，但没有操作项说明没有增加更细的权限管理，使用全部权限
-            if (!leafAuditMap[route.name]) {
-              leafAuditMap[route.name] = {
-                all: true
-              };
-            }
-          }
-        }
-        return true;
+function filterAsyncRouter(asyncRouterMap, roles) {
+  const accessedRouters = asyncRouterMap.filter(route => {
+    if (hasPermission(roles, route)) {
+      if (route.children && route.children.length) {
+        route.children = filterAsyncRouter(route.children, roles);
       }
-      return false;
-    });
-  };
-  const accessedRouters = filterAsyncRouterRec(asyncRouterMap, roles);
-  return {
-    accessedRouters: accessedRouters,
-    leafAuditMap: leafAuditMap
-  };
-}
-
-/**
- * 获取所有节点操作表
- * @returns {[]}
- */
-function getOperatePermissionMap(operates) {
-  // 叶子节点权限信息
-  const permissionMap = {};
-  for (const key in operates) {
-    if (operates.hasOwnProperty(key)) {
-      permissionMap[key] = {};
-      const menuOperates = operates[key].split(',');
-      for (let i = 0; i <= menuOperates.length; i++) {
-        permissionMap[key][menuOperates[i]] = true;
-      }
+      return true;
     }
-  }
-
-  return permissionMap;
+    return false;
+  });
+  return accessedRouters;
 }
 
 const permission = {
   state: {
     routers: constantRouterMap,
-    addRouters: [],
-    leafAuditMap: []
+    addRouters: []
   },
   mutations: {
     SET_ROUTERS: (state, routers) => {
-      state.addRouters = routers.accessedRouters;
-      state.routers = constantRouterMap.concat(routers.accessedRouters);
-      state.leafAuditMap = routers.leafAuditMap;
+      state.addRouters = routers;
+      state.routers = constantRouterMap.concat(routers);
     }
   },
   actions: {
     GenerateRoutes({ commit, state }, data) {
-      const p1 = new Promise((resolve, reject) => {
-        columnsApi.list().then(res => {
-          resolve(res);
-        }).catch(err => {
-          reject(err);
-        });
-      });
-      const p2 = new Promise((resolve, reject) => {
+      return new Promise((resolve, reject) => {
         getUserRoles(state.token).then(res => {
           if (!res || !res.data) {
             reject('error');
@@ -114,51 +59,35 @@ const permission = {
           if (!res.data.menu || res.data.menu.length <= 0) {
             reject('该账户没有访问权限，请联系管理员配置权限');
           }
-          resolve(res.data);
-        }).catch(err => {
-          reject(err);
-        });
-      });
-      const p3 = new Promise((resolve, reject) => {
-        MININAVIGATION.getNavigation().then(res => {
-          resolve(res);
-        }).catch(err => {
-          reject(err);
-        });
-      });
-      return Promise.all([p1, p2, p3]).then(res => {
-        const columns = res[0];
-        const data = res[1];
-        const miniNav = res[2];
-
-        let routes = {
-          accessedRouters: asyncRouterMap,
-          leafAuditMap: {}
-        };
-        if (data && data.menu) {
-          if (data.nodes) {
-            data.nodes.filter(node => {
-              return node.substr(0, 6) === 'column';
-            }).map(node => {
-              data.menu[node] = '';
-            });
+          const data = res.data;
+          let accessedRouters;
+          if (data && data.menu) {
+            commit('SET_ROLES', data.nodes);
+            accessedRouters = filterAsyncRouter(asyncRouterMap, data.menu);
+            // console.log('accessedRouters', accessedRouters);
+          } else {
+            accessedRouters = asyncRouterMap;
+            commit('SET_ROLES', ['admin']);
           }
-          commit('SET_ROLES', data.nodes);
-          routes = filterAsyncRouter(asyncRouterMap, data.menu, data.operates);
-          console.log(routes);
-        } else if (data['is_super']) {
-          commit('SET_ROLES', ['admin']);
-        } else {
-          console.log('GenerateRoutes no menu');
-        }
-
-        appendContentColumnMenu(columns, asyncRouterMap);
-        appendMiniNavMenu(miniNav, asyncRouterMap);
-        commit('SET_ROUTERS', routes);
+          commit('SET_ROUTERS', accessedRouters);
+          resolve();
+        }).catch(error => {
+          reject(error);
+        });
+        // const { roles } = data;
+        // let accessedRouters;
+        // console.log('admin:', roles.indexOf('admin'));
+        // if (roles.indexOf('admin') >= 0) {
+        //   accessedRouters = asyncRouterMap;
+        // } else {
+        //   accessedRouters = filterAsyncRouter(asyncRouterMap, roles);
+        // }
+        // commit('SET_ROUTERS', accessedRouters);
+        // resolve();
       });
     },
     GenerateSupplierRoutes({ commit, state }, data) {
-      const menu = {
+      var menu = {
         fightGroup: '拼团',
         orderManagement: '订单管理',
         orderList: '订单概况',
@@ -166,8 +95,10 @@ const permission = {
       };
       return new Promise((resolve, reject) => {
         commit('SET_ROLES', data);
-        const routes = filterAsyncRouter(asyncRouterMap, menu);
-        commit('SET_ROUTERS', routes);
+        var accessedRoutersa;
+        accessedRoutersa = filterAsyncRouter(asyncRouterMap, menu);
+        console.log(accessedRoutersa);
+        commit('SET_ROUTERS', accessedRoutersa);
         resolve();
       });
     }

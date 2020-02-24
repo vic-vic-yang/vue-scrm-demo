@@ -1,5 +1,5 @@
-import Api from '../index';
 import { Message } from 'element-ui';
+import Api from '../index';
 
 export default {
   getThirdAuthInfo(params) {
@@ -90,6 +90,28 @@ export default {
      * 查询审核状态
      * */
     return Api.get('/v1/wxThirdAuth/wx-third-auth/audit-status', params);
+  },
+  roolBack(params) {
+    return Api.get('/v1/wxThirdAuth/wx-third-auth/revert', {params});
+  },
+  upgrade(params) {
+    return Api.post('/v1/wxThirdAuth/wx-third-auth/release', params);
+  },
+  cancleaudit(params) {
+    return Api.get('/v1/wxThirdAuth/wx-third-auth/undo-audit', { params });
+    // return Api.get('/v1/wxThirdAuth/wx-third-auth/cancle-audit', {params});
+  },
+  qrcode(params) {
+    return Api.get('/v1/wxThirdAuth/wx-third-auth/get-qrcode', {params});
+  },
+  updatelog(params) {
+    return Api.get('/v1/wxThirdAuth/wx-third-auth/update-log', {params});
+  },
+  getnoticeconfig(params) {
+    return Api.get('/v1/wxThirdAuth/wx-third-auth/get-notice-config', {params});
+  },
+  setnoticeconfig(params) {
+    return Api.post('/v1/wxThirdAuth/wx-third-auth/set-notice-config', params);
   }
 };
 

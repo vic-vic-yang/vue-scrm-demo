@@ -1,19 +1,11 @@
-<!--
- * @Description: 
- * @Autor: shao bo
- * @Date: 2019-09-16 14:37:17
- -->
 <template>
   <div id="app">
-    <keep-alive>
-      <router-view v-if="$route.meta.keepAlive" />
-    </keep-alive>
-    <router-view v-if="!$route.meta.keepAlive" />
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
-  export default {
+  export default{
     name: 'App',
     data() {
       const hiddenProperty = 'hidden' in document ? 'hidden'

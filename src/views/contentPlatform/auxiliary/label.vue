@@ -55,12 +55,12 @@ export default {
           prop: 'USER_ACTION',
           actions: [
             {
-              type: 'editor1',
+              type: 'editor',
               options: this.getTaskEditBtnInfo,
               disableds: this.ifDisabled
             },
             {
-              type: 'delete1',
+              type: 'delete',
               options: this.getTaskDelBtnInfo,
               disableds: this.ifDisabled
             }
@@ -99,14 +99,14 @@ export default {
       this.$router.push({ name: 'contentAddLabel' });
     },
     actionHandler(type, info) {
-      if (type === 'editor1') { // 编辑
+      if (type === 'editor') { // 编辑
         this.$router.push({
           name: 'contentEditorLabel',
           params: {
             id: info.id
           }
         });
-      } else if (type === 'delete1') { // 删除
+      } else if (type === 'delete') { // 删除
         this.$confirm(`确认删除标签 <b>${info.tag_name}</b> 吗？`, '删除', {
           dangerouslyUseHTMLString: true,
           confirmButtonText: '确定',

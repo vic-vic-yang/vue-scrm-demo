@@ -1,13 +1,7 @@
-<!--
- * @Description: 
- * @Autor: shao bo
- * @Date: 2019-09-16 14:37:18
- -->
 <template>
   <div class="dashboard-container">
     <!--<component :is="currentRole"></component>-->
-    <dataTotalAnalysis/>
-    <!-- <el-main>敬请期待</el-main> -->
+    <el-main>敬请期待</el-main>
   </div>
 </template>
 
@@ -15,10 +9,10 @@
 import { mapGetters } from 'vuex';
 import adminDashboard from './admin';
 import editorDashboard from './editor';
-import dataTotalAnalysis from '@/views/dataTotalAnalysis/index';
+
 export default {
   name: 'dashboard',
-  components: { adminDashboard, editorDashboard, dataTotalAnalysis },
+  components: { adminDashboard, editorDashboard },
   data() {
     return {
       currentRole: 'adminDashboard'

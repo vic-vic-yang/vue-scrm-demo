@@ -2,7 +2,7 @@
  * @Description: In User Settings Edit
  * @Author: your name
  * @Date: 2019-09-16 14:37:18
- * @LastEditTime: 2019-12-03 09:24:05
+ * @LastEditTime: 2019-11-12 17:46:33
  * @LastEditors: Please set LastEditors
  -->
 <template>
@@ -24,19 +24,9 @@
             </el-select>
           </el-input>
         </el-form-item>
-        <el-form-item prop="supplier" label="供应商">
-          <el-select placeholder="全部" clearable v-model="orderQueryFrm.supplier_id">
-            <el-option
-              v-for="item in supplierOptions"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id">
-            </el-option>
-          </el-select>
+        <el-form-item v-if="!isSupplier" prop="supplier" label="供应商">
+          <el-input placeholder="供应商名称" v-model="orderQueryFrm.supplier"></el-input>
         </el-form-item>
-        <!-- <el-form-item v-if="!isSupplier" prop="supplier" label="供应商">
-          <el-input placeholder="供应商名称" v-model="orderQueryFrm.supplie"></el-input>
-        </el-form-item> -->
         <el-form-item prop="goods_name" label="商品名称">
           <el-input placeholder="商品名称" v-model="orderQueryFrm.goods_name" clearable></el-input>
         </el-form-item>
@@ -99,7 +89,6 @@
   import { parseTime } from '@/utils';
   import _ from 'lodash';
   import { getAuthType } from '@/utils/auth';
-  import SuppliersApi from '@/api/integralMall/suppliers';
   export default {
     name: 'orderOverview',
     components: {
@@ -114,8 +103,8 @@
           goods_name: '',
           status: '',
           time: [],
-          goods_type: 0,
-          supplier_id: ''
+          supplier: '',
+          goods_type: 0
         },
         exportDialogShow: false,
         tableOptions: [
@@ -257,23 +246,13 @@
             }
           }]
         },
-        query: null,
-        supplierOptions: []
+        query: null
       };
     },
     created() {
       this.getData();
-      this.getSupplier();
     },
     methods: {
-      getSupplier() {
-        SuppliersApi.list({
-          page_index: 1,
-          page_size: 10000
-        }).then(res => {
-          this.supplierOptions = res.result || [];
-        });
-      },
       getData() {
         const query = this.query || {};
         this.tabLoading = true;

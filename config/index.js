@@ -2,8 +2,8 @@
  * @Description: In User Settings Edit
  * @Author: your name
  * @Date: 2019-01-16 14:20:38
- * @LastEditTime : 2019-12-27 10:42:18
- * @LastEditors  : Please set LastEditors
+ * @LastEditTime: 2019-11-05 21:44:28
+ * @LastEditors: shao bo
  */
 'use strict'
 // Template version: 1.2.6
@@ -19,11 +19,13 @@ module.exports = {
     proxyTable: {
       "/api": {
         // target: 'http://b.scrm.com/',
-        // target: 'http://api.scrm.buerkongjian.com',// 正式接口域名和端口号
-        target: 'http://test.b.universiade.buerkongjian.com/api',//  测式接口域名和端口号
+        target: 'http://test.api.scrm.buerkongjian.com',// 正式接口域名和端口号
+        // target: 'http://test.api.scrm.buerkongjian.com', //  测式接口域名和端口号
         // target: 'http://scrm2b.com',//设置你调用的接口域名和端口号
-        changeOrigin: true,//跨域
-        pathRewrite: { '^/api': '' }
+        changeOrigin: true, //跨域
+        pathRewrite: {
+          '^/api': ''
+        }
       },
     },
     // Various Dev Server settings

@@ -20,6 +20,7 @@
                     <div class="article_pages">
                       <el-pagination
                         :page-size="wotks_page_info.pageSize"
+                        :pager-count="Math.ceil(wotks_page_info.totalCount / wotks_page_info.pageSize)"
                         :current-page="wotks_page_info.pageIndex"
                         @current-change="currentChangeActivity"
                         layout="prev, pager, next"
@@ -28,8 +29,8 @@
                     </div>
                   </el-select>
                 </el-form-item>
-                <el-form-item prop="nickname" label="昵称">
-                    <el-input placeholder="昵称" v-model="blackListQueryFrm.nickname"></el-input>
+                <el-form-item prop="nickname" label="微信昵称">
+                    <el-input placeholder="微信昵称" v-model="blackListQueryFrm.nickname"></el-input>
                 </el-form-item>
                 <el-form-item>
                 <el-button type="primary" @click="searchBlackList" icon="el-icon-search">查询</el-button>
@@ -91,7 +92,7 @@ export default {
           prop: 'user_name'
         },
         {
-          label: '昵称',
+          label: '微信昵称',
           prop: 'nickname'
         },
         {

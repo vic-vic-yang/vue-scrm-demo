@@ -9,7 +9,7 @@
   <div>
     <template v-if="previewVideo">
       <div class="vdo" :style="width? `width:${width}px` :'width: 600px'" @mouseover="showVdoDel=true" @mouseout="showVdoDel=false">
-        <video :src="previewVideo" preload="meta" controls="controls" :width="width?width+'px':'600px'" :height="height?height+'px':'380px'" style="object-fit: initial;width: 100%;"></video>
+        <video :src="previewVideo" controls="controls" :width="width?width+'px':'600px'" :height="height?height+'px':'380px'" style="margin-left:20px"></video>
         <a
           @click.stop.prevent="delVdo"
           class="del"

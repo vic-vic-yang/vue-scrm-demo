@@ -2,8 +2,8 @@
   <div class="app-container">
     <div class="control-group">
       <el-form :inline="true" ref="userListQueryFrm" :model="userListQueryFrm">
-        <el-form-item prop="wx_nick_name" label="微信/微博昵称">
-          <el-input placeholder="微信/微博昵称" v-model="userListQueryFrm.wx_nick_name"></el-input>
+        <el-form-item prop="wx_nick_name" label="微信昵称">
+          <el-input placeholder="微信昵称" v-model="userListQueryFrm.wx_nick_name"></el-input>
         </el-form-item>
         <el-form-item prop="user_name" label="用户名称">
           <el-input placeholder="用户名称" v-model="userListQueryFrm.user_name"></el-input>
@@ -88,7 +88,7 @@
             prop: 'id'
           },
           {
-            label: '微信/微博昵称',
+            label: '微信昵称',
             prop: 'nickname'
           },
           {

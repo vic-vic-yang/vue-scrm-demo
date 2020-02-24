@@ -14,7 +14,7 @@ const Upload = (url = '/v1/fileUpload/file-upload/upload', file, name = 'file', 
   uploadFormData.append(name, file);
   return Api.post(url, uploadFormData, {
     headers: { 'Content-Type': 'multipart/form-data' },
-    timeout: 60000 * 5,
+    timeout: 30000,
     onUploadProgress(ev) {
       typeof progressFn === 'function' && progressFn(ev);
     }
@@ -34,9 +34,6 @@ const Upload = (url = '/v1/fileUpload/file-upload/upload', file, name = 'file', 
         duration: 3000
       });
       return Promise.reject(res);
-    }).catch(err => {
-      alert('上传失败');
-      return Promise.reject(err);
     });
 };
 
@@ -45,9 +42,6 @@ export default {
     return Upload('/v1/fileUpload/file-upload/upload', file, name, progressFn);
   },
   audio(file, name = 'file', progressFn) {
-    return Upload('/base/v1/fileUpload/file-upload/web-upload', file, name, progressFn);
-  },
-  file(file, name = 'file', progressFn) {
     return Upload('/v1/fileUpload/file-upload/file-upload', file, name, progressFn);
   },
   webUpload() {

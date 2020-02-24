@@ -6,7 +6,7 @@
     </header>
     <el-card class="box-card">
       <el-row v-if="userDetails.user_base_info">
-        <el-col :span="4"><div class="grid-content">{{userDetail.user_base_info.source === 'wb' ? '微博' : '微信'}}昵称：{{userDetails.user_base_info.nickname}}</div></el-col>
+        <el-col :span="4"><div class="grid-content">微信昵称：{{userDetails.user_base_info.nickname}}</div></el-col>
         <el-col :span="6"><div class="grid-content">用户名：{{address.name}}</div></el-col>
         <el-col :span="6"><div class="grid-content">手机号：{{address.phone}}</div></el-col>
       </el-row>

@@ -12,6 +12,9 @@ contexts.keys().forEach(component => {
     routes.push(...objArr);
   }
 });
+routes.sort((a, b) => {
+  return a.order - b.order;
+});
 export {
   routes
 };

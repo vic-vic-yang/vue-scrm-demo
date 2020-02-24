@@ -7,7 +7,6 @@ export default {
   component: Layout,
   name: 'fightGroup',
   meta: { title: 'fightGroup', icon: 'mall' },
-  alwaysShow: true,
   children: [
     {
       path: 'commodity',
@@ -15,7 +14,6 @@ export default {
       meta: {
         title: 'commodityManagement'
       },
-      alwaysShow: true,
       children: [
         {
           path: 'commodity',
@@ -148,7 +146,6 @@ export default {
       meta: {
         title: 'activityInfoManagement'
       },
-      alwaysShow: true,
       children: [
         {
           path: 'guide',
@@ -204,7 +201,6 @@ export default {
       meta: {
         title: 'orderManagement'
       },
-      alwaysShow: true,
       children: [
         {
           path: 'overview',
@@ -272,7 +268,6 @@ export default {
       meta: {
         title: 'writeOffManagement'
       },
-      alwaysShow: true,
       children: [
         {
           path: 'writeOffManage',
@@ -316,6 +311,35 @@ export default {
           component: () => import('@/views/fightGroup/service/communication'),
           name: 'serviceCommunication',
           meta: { title: 'communication' },
+          hidden: true
+        }
+      ]
+    },
+    {
+      path: 'dataView',
+      component: blankLayout,
+      meta: {
+        title: 'dataView'
+      },
+      children: [
+        {
+          path: 'index',
+          component: () => import('@/views/fightGroup/dataView/index'),
+          name: 'fightGroupDataView',
+          meta: { title: 'dataView', noCache: true }
+        },
+        {
+          path: 'dataViewSetting',
+          component: () => import('@/views/fightGroup/dataView/dataViewSetting'),
+          name: 'fightGroupDataViewSetting',
+          meta: { title: 'dataViewSetting' },
+          hidden: true
+        },
+        {
+          path: ':id',
+          component: () => import('@/views/fightGroup/dataView/dataViewSetting'),
+          name: 'fightGroupDataViewModify',
+          meta: { title: 'dataViewModify' },
           hidden: true
         }
       ]

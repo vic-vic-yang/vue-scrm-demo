@@ -28,8 +28,5 @@ export default {
   },
   common_details(params) {
     return Api.get('/base/v1/user/c-user/common-view', { params }).then(res => res.data);
-  },
-  changePassword(params) {
-    return Api.post('/v1/userManage/user/reset', params).then(res => res.data);
   }
 };

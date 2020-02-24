@@ -2,7 +2,7 @@
  * @Description: In User Settings Edit
  * @Author: your name
  * @Date: 2019-01-16 14:20:38
- * @LastEditTime: 2019-12-06 19:30:54
+ * @LastEditTime: 2019-08-22 11:18:09
  * @LastEditors: Please set LastEditors
  -->
 <template>
@@ -15,7 +15,6 @@
               :height="height"
               :max-height="maxHeight"
               @select="handleSelect"
-              @select-all="handleSelectAll"
               @selection-change="handleSelectionChange">
       <slot>
         <el-table-column v-if="ifmultipleSelection"
@@ -48,29 +47,9 @@
                                 style="margin-left:10px">
                       <el-button size="mini"
                                 class="small-padding fixed-width">
-                        {{action.label}}</el-button>
+                        {{action.label||'更多'}}</el-button>
                       <el-dropdown-menu slot="dropdown">
                         <el-dropdown-item v-for="(item,index) in action.operations"
-                                          :key="index"
-                                          :command="item.prop ? scope.row[item.prop] : item">
-                          <el-button style="margin-top: 10px" :operate="item.operate" @click.stop="handleCommand(item.prop ? item.prop : item,scope.row)">
-                            {{item.prop ? scope.row[item.prop] : item}}
-                          </el-button>
-                        </el-dropdown-item>
-                      </el-dropdown-menu>
-                    </el-dropdown>
-                  </template>
-                  <template v-else-if="action.type === 'MORENEW'">
-                    <el-dropdown :key="index" v-if="actionBtnShow(action,scope.row)"
-                                :operate="actionOperate(action,scope.row)"
-                                style="margin-right:10px">
-                      <el-button size="mini"
-                                :disabled="actionDsb(action,scope.row)"
-                                :type="getActionBtnType(action,scope.row)"
-                                class="small-padding fixed-width">
-                        {{actionLabel(action, scope.row)}}</el-button>
-                      <el-dropdown-menu slot="dropdown">
-                        <el-dropdown-item v-for="(item,index) in actionOpt(action, scope.row)"
                                           :key="index"
                                           :command="item.prop ? scope.row[item.prop] : item">
                           <div @click.stop="handleCommand(item.prop ? item.prop : item,scope.row)">
@@ -87,7 +66,7 @@
                       :label="column.label"
                       @change="actionHandler(action,scope.row)"></el-checkbox>
                   </template>
-                  <template v-else-if="action.actionType === 'select'">
+                  <template v-else>
                     <el-select :style="returnStyle(action.width)" :key="index" v-if="action.actionType === 'select'" v-model="scope.row.status" placeholder="请选择"
                       size="mini"
                       @change="handleSelectChange2(scope.row)"
@@ -99,19 +78,17 @@
                         :value="item.value">
                       </el-option>
                     </el-select>
-                  </template>
-                  <template v-else>
-                    <el-button
-                      :operate="actionOperate(action,scope.row)"
-                      v-if="actionBtnShow(action,scope.row)"
-                              :key="index"
-                              :type="getActionBtnType(action,scope.row)"
-                              :disabled="actionDsb(action,scope.row)"
-                              size="mini"
-                              class="small-padding fixed-width"
-                              @click.stop="actionHandler(action,scope.row)">
-                      {{actionLabel(action, scope.row)}}
-                    </el-button>
+                    <template v-else>
+                      <el-button v-if="actionBtnShow(action,scope.row)"
+                                :key="index"
+                                :type="getActionBtnType(action,scope.row)"
+                                :disabled="actionDsb(action,scope.row)"
+                                size="mini"
+                                class="small-padding fixed-width"
+                                @click.stop="actionHandler(action,scope.row)">
+                        {{actionLabel(action, scope.row)}}
+                      </el-button>
+                    </template>
                   </template>
                 </template>
               </div>
@@ -205,13 +182,6 @@ const defaultBtnLabel = {
   pass: '通过',
   reject: '拒绝',
   forbid: '禁用'
-};
-const defaultBtnOp = {
-  edit: 'update',
-  del: 'delete',
-  pass: 'update',
-  reject: 'update',
-  forbid: 'update'
 };
 
 export default {
@@ -384,9 +354,8 @@ export default {
     },
     actionBtnShow(action, scope) {
       if (this.getActionBtnType(action, scope)) {
-        if (typeof action === 'object') {
-          if (typeof action.showBtn === 'function') return action.showBtn(action, scope);
-          if (typeof action.showBtn === 'boolean') return action.showBtn;
+        if (typeof action === 'object' && typeof action.showBtn === 'function') {
+          return action.showBtn(action, scope);
         }
         return true;
       }
@@ -405,16 +374,8 @@ export default {
       }
       if (typeof action === 'object') {
         if (typeof action.disableds === 'function') return action.disableds(scope);
-        if (typeof action.disableds === 'boolean') return action.disableds;
       }
       return false;
-    },
-    actionMoreDsb(action, scope) {
-      // 报名活动编辑按钮才可点击
-      if (!action.label) {
-        return false;
-      }
-      return true;
     },
     getActionColumnWidth(actions) {
       let len = 0;
@@ -430,25 +391,6 @@ export default {
         return action.label;
       }
       return defaultBtnLabel[action];
-    },
-    actionOpt(action, item) {
-      if (typeof action === 'object') {
-        if (typeof action.options === 'function') action = action.options(item);
-        return action.opt;
-      }
-      return [];
-    },
-    actionOperate(action, item) {
-      if (typeof action === 'object') {
-        if (action.operate) {
-          return action.operate;
-        }
-        if (typeof action.options === 'function') {
-          action = action.options(item);
-        }
-        return action.operate;
-      }
-      return defaultBtnOp[action] || '';
     },
     cellClickHandler(row, column, cell) {
       if (row.itemIndex) { // 活动中心--存在相同id的情况，通过下标区分
@@ -482,14 +424,8 @@ export default {
       this.$emit('blurInput', scope, this.$refs.input[0].value);
     },
     tagTypeHandler(column, row) {
-      if (column.options.propValues) {
-        return column.options.propValues[row[column.options.prop] + ''];
-      }
       const typesArr = ['danger', 'success', 'info', 'warning', ''];
       return column.options.prop ? typesArr[row[column.options.prop] * 1] : typesArr[2];
-    },
-    handleSelectAll(selection) {
-      this.$emit('handleSelectAll', selection);
     }
   }
 };

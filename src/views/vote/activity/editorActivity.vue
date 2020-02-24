@@ -11,12 +11,12 @@
              label-width="140px">
       <template v-if="activeStep === 0">
         <el-form-item prop="activity_name"
+                      :maxlength="40"
                       label="活动标题">
           <el-input v-model="groupFrm.activity_name"
                     name="matchName"
-                    :maxlength="18"
                     :clearable="true"
-                    placeholder="请输入活动标题(限18字)">
+                    placeholder="请输入活动标题(限40字)">
           </el-input>
         </el-form-item>
         <el-form-item prop="description"
@@ -30,8 +30,8 @@
           <el-input v-model="groupFrm.intro"
                     name="matchIntro"
                     :clearable="true"
-                    :maxlength="58"
-                    placeholder="请输入活动简介(限58字符)">
+                    :maxlength="100"
+                    placeholder="请输入活动简介(限100字符)">
           </el-input>
         </el-form-item>
         <el-form-item prop="rank_rule_desc"
@@ -110,20 +110,15 @@
             </el-col>
           </el-row>
         </el-form-item>
-        <el-form-item 
+        <el-form-item prop="img"
                       label="活动列表配图">
           <upload-prize-avatar v-model="groupFrm.img"></upload-prize-avatar>
           <small style="color: #999">建议尺寸700*390</small>
           <!-- <img-cropper :pic="images" @get_pic="get_pic" type="only" :width="335" :height="415"></img-cropper> -->
         </el-form-item>
-        <el-form-item prop="view_img" label="活动详情页短图">
+        <el-form-item prop="view_img" label="活动详情页配图">
           <upload-prize-avatar v-model="groupFrm.view_img"></upload-prize-avatar>
-          <small style="color: #999">建议尺寸750*578，手机端展示</small>
-          <!-- <img-cropper :pic="view_images" @get_pic="get_piv" type="only" :width="375" :height="270"></img-cropper> -->
-        </el-form-item>
-        <el-form-item prop="pc_view_img" label="活动详情页长图">
-          <upload-prize-avatar v-model="groupFrm.pc_view_img"></upload-prize-avatar>
-          <small style="color: #999">建议尺寸1440*600，pc端展示</small>
+          <small style="color: #999">建议尺寸750*578</small>
           <!-- <img-cropper :pic="view_images" @get_pic="get_piv" type="only" :width="375" :height="270"></img-cropper> -->
         </el-form-item>
         <el-form-item prop="share_img"
@@ -230,7 +225,7 @@
             <el-radio :label="1">开</el-radio>
           </el-radio-group>
         </el-form-item>
-        <!-- <el-form-item prop="vote_conditions"
+        <el-form-item prop="vote_conditions"
                       label="投票要求">
           <el-checkbox-group v-model="groupFrm.vote_conditions"
                              class="switch-flex"
@@ -241,7 +236,7 @@
             </el-checkbox>
           </el-checkbox-group>
           <small class="text-999">多选为所有规则都需要满足才能投票，不选则为没有限制</small>
-        </el-form-item> -->
+        </el-form-item>
         <template v-if="wp_img_show">
           <el-form-item prop="wp_img"
                         label="公众号配图"
@@ -249,7 +244,7 @@
             <upload-prize-avatar v-model="groupFrm.wp_img"></upload-prize-avatar>
           </el-form-item>
           <el-form-item prop="authorizer_appid" label="请选择公众号">
-            <el-select placeholder="请选择公众号" v-model.number="groupFrm.authorizer_appid">
+            <el-select placeholder="请选择公众号" v-model.num="groupFrm.authorizer_appid">
               <el-option
                 v-for="(item, index) in mpOptions"
                 :key="index"
@@ -446,7 +441,6 @@ export default {
         // missions: [], // 选择的有奖任务
         img: '', // 活动配图
         view_img: '', // 活动详情页配图
-        pc_view_img:'',// 活动详情页宽图
         share_img: '', // 分享配图
         wp_img: '', // 公众号配图
         allow_upload: 1, // 是否允许用户上传内容
@@ -544,11 +538,6 @@ export default {
         view_img: [
           {
             required: true, message: '请上传活动详情页配图'
-          }
-        ],
-        pc_view_img: [
-          {
-            required: true, message: '请上传活动详情页长图'
           }
         ],
         share_img: [
@@ -780,9 +769,9 @@ export default {
       this.$refs.groupFrm.validate(valid => {
         if (valid) {
           const groupFrm = Object.assign({}, this.groupFrm);
-          groupFrm.description = groupFrm.description.replace(/\<img/gi, '<img style="max-width:100%;height:auto"');
-          groupFrm.rank_rule_desc = groupFrm.rank_rule_desc.replace(/\<img/gi, '<img style="max-width:100%;height:auto"');
-          groupFrm.award_rich = groupFrm.award_rich.replace(/\<img/gi, '<img style="max-width:100%;height:auto"');
+          groupFrm.description = groupFrm.description.replace(/\<img/gi, '<img style="max-width:100%;height:auto;display:block;"');
+          groupFrm.rank_rule_desc = groupFrm.rank_rule_desc.replace(/\<img/gi, '<img style="max-width:100%;height:auto;display:block;"');
+          groupFrm.award_rich = groupFrm.award_rich.replace(/\<img/gi, '<img style="max-width:100%;height:auto;display:block;"');
           groupFrm.start_time = this.groupFrm.time[0];
           groupFrm.end_time = this.groupFrm.time[1];
           groupFrm.entry_condition = [];

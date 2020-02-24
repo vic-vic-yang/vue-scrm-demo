@@ -49,7 +49,7 @@
             width: 120,
             options: {
               type: 'tag',
-              prop: 'stageType'
+              prop: 'platform_status'
             }
           },
           {
@@ -69,12 +69,11 @@
                 label: '审核',
                 type: 'detail',
                 options: this.getStatusBtnInfo,
-                disableds: (item) => {return Number(item.black) === 1}
+                disableds: this.ifDisabled
               },
               {
                 label: '拉入黑名单',
-                type: 'blacklist',
-                disableds: (item) => {return Number(item.black) === 1}
+                type: 'blacklist'
               }
             ]
           }
@@ -86,6 +85,17 @@
         tabLoading: true,
         ifComment: false,
         commentId: '',
+        userDetailInfo: {},
+        matchTypeOptions: [
+          {
+            label: '未过审',
+            value: '1'
+          },
+          {
+            label: '已过审',
+            value: '2'
+          }
+        ]
       };
     },
     created() {
@@ -100,19 +110,15 @@
           compositionId: this.id
         }).then(data => {
           data.result.forEach(item => {
-            switch (Number(item.status)) {
-              case 2:
-                item.status_cn = '未过审'
-                item.stageType = 2
-                break;
-              default:
-                item.status_cn = '已过审'
-                item.stageType = 4
-                break;
+            item.platform_status = 1;
+            if (item.status - 0 === 0) {
+              item.platform_status = 3;
+            } else if (item.status - 0 === 2) {
+              item.platform_status = 0;
             }
-            if (Number(item.black) === 1) {
+            if (item.black - 0 === 1) {
               item.status_cn = '黑名单';
-              item.stageType = 0
+              item.platform_status = 2;
             }
           });
           this.tableData = data.result;
@@ -165,7 +171,7 @@
         if (!item) {
           return false;
         }
-        if (Number(item.black) === 1) return true;
+        if (item.platform_status - 0 === 2) return true;
       },
       commentNoPass() {
         Works.commentStatus(this.commentId, { status: 2 }).then(() => {

@@ -14,18 +14,22 @@
             </div>
             <div class="text item"><span class="span">微信认证：</span>{{item.verify_type == 0 ? '已认证' : (item.verify_type == -1) ? '未认证' : ''}}</div>
             <div class="text item"><span class="span">app_id：</span>{{item.authorizer_appid}}</div>
+            <div class="text item"><span class="span">当前模板：</span>{{item.nick_name}}
+              <small class="gray" style="margin-left: 30px;" v-if="item.status == 0">不二内容</small>
+              <el-button style="margin-left: 30px" type="text" @click.prevent="setMiniProgram(item)">切换模板</el-button>
+            </div>
             <div class="text item">
               <span class="span">自动更新：</span>
-              有新版本时自动提交微信审核（若审核失败需手动更新）
               <el-switch
                 v-model="item.auto_release"
                 :active-value="1"
                 :inactive-value="0"
                 @change="releaseAutoUpdate(item)">
               </el-switch>
+               注：有新版本时自动提交微信审核（若审核失败需手动更新）
             </div>
             <div class="text item"><span class="span">线上版本：</span>{{item.user_version}}</div>
-            <div class="text item"><span class="span">更新时间：</span>
+            <div class="text item"><span class="span">上次更新时间：</span>
             {{item.create_time}}
             </div>
             <div class="text item">
@@ -39,18 +43,36 @@
                 <p v-if="item.code_update_info.audit_status == -1 && item.code_update_info.is_new_version != 1">待更新</p>
                 <div>
                   <template v-if="item.code_update_info.is_new_version == 1 && item.code_update_info.audit_status != 2">
+                    <p class="version-small gray-size">新版本更新审核的时候，不会影响之前已经在线上运行的老版本小程序。</p>
+                    <el-button type="primary" size="mini" @click="lookVersionInfo(item)">查看版本说明</el-button>
                     <el-button type="primary" size="mini" @click="updateVersion(item)">更新版本</el-button>
-                    <small class="version-small gray-size">新版本更新审核的时候，不会影响之前已经在线上运行的老版本小程序。</small>
                   </template>
                   <template v-else-if="item.code_update_info.audit_status == 2">
-                    <small class="gray-size">预计7个工作日内完成审核（遇审核量过大等特殊情况审核会延迟）审核过程中，你当前版本的小程序功能可正常使用</small>
+                    <p class="gray-size">预计7个工作日内完成审核（遇审核量过大等特殊情况审核会延迟）审核过程中，你当前版本的小程序功能可正常使用</p>
+                    <el-button type="primary" size="mini" @click="lookCode(item)">获取体验码</el-button>
+                    <el-button type="primary" size="mini" @click="cancleVersion(item)">取消更新</el-button>
                   </template>
-                  <template v-else-if="item.code_update_info.audit_status == 1 || item.code_update_info.audit_status == 0">
+                  <template v-else-if="item.code_update_info.audit_status == 1">
+                    <el-button type="primary" size="mini" @click="refusalInfo(item)">查看审核不通过原因</el-button>
+                  </template>
+                  <!-- <template v-else-if="item.code_update_info.audit_status == 1 || item.code_update_info.audit_status == 0">
                     <el-button :type="item.code_update_info.audit_status == 1 ? 'primary' : ''" size="mini" @click="updateExamine(item)">重新提交审核</el-button>
-                  </template>
+                  </template> -->
                 </div>
               </div>
-             </div>
+            </div>
+            <div class="text item"><span class="span">回退小程序版本：</span>
+              <el-button type="primary" size="mini" @click="releaseVersion(item)">回退版本</el-button>
+              <small class="version-small gray-size">只能回退到上一版本且不能连续回退两次</small>
+            </div>
+            <div class="text item">
+              <span class="span">审核结果通知：</span>
+              <el-button  type="text" @click.prevent="editNote(item)">编辑</el-button>
+            </div>
+            <div class="text item">
+              <span class="span">更新日志：</span>
+              <el-button  type="text" @click.prevent="updateLog(item)">查看</el-button>
+            </div>
             <div class="text item">
               <span class="span">已授权权限：</span>
               <small style="color: #CC6600;" v-if="item.status == 0">您的小程序已在微信后台取消授权</small>
@@ -105,8 +127,10 @@
       :visible.sync="dialog.dialogVisible"
       width="30%">
       <span>{{dialog.content}}</span>
+      <br v-if="dialog.tips"/>
+      <el-checkbox style="margin-top:20px" v-if="dialog.tips" v-model="checked">{{dialog.tips}}</el-checkbox>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="confirmDialog(dialog.type)">{{dialog.confirmText}}</el-button>
+        <el-button type="primary" @click="confirmDialog(dialog.type)" :disabled="dialog.tips&&!checked">{{dialog.confirmText}}</el-button>
         <el-button @click="cancelDialog(dialog.type)">{{dialog.cancelText}}</el-button>
       </span>
     </el-dialog>
@@ -121,6 +145,60 @@
           <!--<span v-if="item.funcscope_category.name != '未知'">{{item.funcscope_category.name}}</span>-->
         </div>
       </div>
+    </el-dialog>
+    <el-dialog
+      title="编辑通知人信息"
+      :visible.sync="noteDialog"
+      width="40%">
+      <el-form
+      class="commodity-edit__form"
+      ref="taskFm"
+      label-width="160px">
+        
+        <el-form-item   label="添加手机号" style="margin-left:-80px;margin-bottom:6px" >
+          <div v-for="(item, index) in phoneList" :key='index'>
+            <el-input style="width: 220px;" v-model="item.phone" maxlength="11" />
+            <i
+              :span="2"
+              v-if="index > 0"
+              class="el-icon-delete"
+              @click.stop="delLine(index)"
+              style="color:#fff;background-color: #f56c6c;padding:10px;border-radius:50%;margin-left:22px;cursor:pointer "
+            ></i>
+            <i
+              :span="2"
+              v-if="index === phoneList.length - 1"
+              class="el-icon-plus"
+              @click.stop="addLine(index)"
+              style="color:#fff;background-color: #409eff;padding:10px;border-radius:50%;cursor:pointer "
+            ></i>
+          </div>
+        </el-form-item>
+        <div style="height:20px"></div>
+        <el-form-item   label="添加钉钉聊天" style="margin-left:-80px;margin-bottom:6px" >
+          <div v-for="(item, index) in ddList" :key='index'>
+            <el-input style="width: 220px;" v-model="item.link" maxlength="100" />
+            <i
+              :span="2"
+              v-if="index > 0"
+              class="el-icon-delete"
+              @click.stop="delddLine(index)"
+              style="color:#fff;background-color: #f56c6c;padding:10px;border-radius:50%;margin-left:22px;cursor:pointer "
+            ></i>
+            <i
+              :span="2"
+              v-if="index === ddList.length - 1"
+              class="el-icon-plus"
+              @click.stop="addddLine(index)"
+              style="color:#fff;background-color: #409eff;padding:10px;border-radius:50%;cursor:pointer "
+            ></i>
+          </div>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="noteDialog = false">取 消</el-button>
+        <el-button type="primary" @click="noteSure">确 定</el-button>
+      </span>
     </el-dialog>
     <!--选择小程序功能-->
     <el-dialog
@@ -187,16 +265,35 @@
         </template>
       </span>
     </el-dialog>
+    <el-dialog
+      title="更新日志"
+      :visible.sync="dialogLog"
+      width="70%">
+      <custom-el-table
+        v-loading="tabLoading"
+        v-model="pageIndex"
+        :tableData="tableData"
+        :tableOptions="tableOptions"
+        :total="totalCount"
+        @size-change="sizeChangeHandler"
+        @page-change="pageChangeHandler">
+      </custom-el-table>
+    </el-dialog>
+
 
   </div>
 </template>
 
 <script>
   import wxManager from '@/api/authorize/wxManager';
+  import customElTable from '@/components/customElTable';
   import { parseTime } from '@/utils';
 
   export default {
     name: 'bindMiniProgram',
+    components: {
+      customElTable
+    },
     beforeRouteEnter(to, from, next) {
       const v = to.query.v;
       const auth_code = to.query.auth_code;
@@ -233,6 +330,8 @@
         dialogJurisdiction: false,
         dialogFeatures: false,
         dbRelieve: false,
+        dialogLog: false,
+        dialogQrCode: false,
         userGuideUrl: '',
         authInfo: [],
         authStatus: 0,
@@ -275,7 +374,43 @@
         p_id: 0, // 设置功能的小程序选择的id
         up_id: 0, // 更新版本的小程序选择的id
         app_id: 0,
-        is_common: false
+        is_common: false,
+        checked: false,
+        noteDialog: false,
+        phoneList: [
+          {
+            phone: ''
+          }
+        ],
+        ddList: [
+          {
+            link: ''
+          }
+        ],
+        qrcode: '',
+        pageIndex: 1,
+        tableData: [],
+        totalCount: 0,
+        tableOptions: [
+          {
+            label: '序号',
+            prop: 'id',
+            width: 100
+          },
+          {
+            label: '模板ID',
+            prop: 'template_id'
+          },
+          {
+            label: '更新说明',
+            prop: 'version_desc'
+          },
+          {
+            label: '更新时间',
+            prop: 'create_time'
+          }
+        ],
+        tabLoading: false
       };
     },
     watch: {
@@ -420,6 +555,19 @@
           cancelText: '取消'
         });
       },
+      releaseVersion(data) {
+        this.up_id = data.id;
+        this.checked = false;
+        Object.assign(this.dialog, {
+          title: '提示',
+          type: 5,
+          dialogVisible: true,
+          content: '回退到上一个版本可能造成现有的功能不可用，请慎重考虑是否回退',
+          tips: '我已知晓风险，确认回退',
+          confirmText: '确认',
+          cancelText: '取消'
+        });
+      },
       // 添加小程序
       bindHandler() {
         this.authUrl && window.open(this.authUrl, '_self');
@@ -521,11 +669,18 @@
           });
         } else if (type === 2) {
           location.reload();
-        } else if (type === 3 || type === 4) {
+        } else if (type === 3) {
           // 更新版本
           console.log(this.up_id);
           this.features_id = this.up_id;
+          this.updateGrade();
+        } else if (type === 4) {
+          console.log(this.up_id);
+          this.features_id = this.up_id;
           this.releaseFeatures();
+        } else if (type === 5) {
+          // todo 回退版本
+          this.rollBack();
         }
       },
       // 下一步
@@ -538,13 +693,22 @@
       },
       // 添加小程序跳转
       addLink() {
-        if (this.mini_program.length < 10) {
-          var n_id = this.mini_program[this.mini_program.length - 1].id * 1 || this.mini_program.length - 1;
-          this.mini_program.push({
-            id: n_id + 1,
-            app_id: '',
-            remarks: ''
-          });
+        function validate(data) {
+          if (!data.app_id || !data.remarks) return true;
+          return false;
+        }
+        const isIllegality = this.mini_program.some(validate);
+        if (isIllegality) {
+          this.$message.warning('请检查是否有APPID或备注信息未填写');
+        } else {
+          if (this.mini_program.length < 10) {
+            var n_id = this.mini_program[this.mini_program.length - 1].id * 1 || this.mini_program.length - 1;
+            this.mini_program.push({
+              id: n_id + 1,
+              app_id: '',
+              remarks: ''
+            });
+          }
         }
       },
       // 移除该小程序
@@ -557,26 +721,35 @@
       },
       // 确定
       determineFeatures() {
-        var i = 0;
-        this.mini_program.map(item => {
-          if (item.app_id !== '') {
-            i += 1;
-          }
-        });
-        if (i < 1) {
-          this.$message({
-            type: 'info',
-            message: '缺少必要参数'
-          });
+        function validate(data) {
+          if (!data.app_id || !data.remarks) return true;
+          return false;
+        }
+        const isIllegality = this.mini_program.some(validate);
+        if (isIllegality) {
+          this.$message.warning('请检查是否有APPID或备注信息未填写');
         } else {
-          this.is_common = true;
-          Promise.all(this.selectFeaturesItem(this.p_id, this.features_id), this.saveMiniProgramJump()).then(() => {
-            location.reload();
-          }).catch(() => {
-            setTimeout(() => {
-              location.reload();
-            }, 1500);
+          var i = 0;
+          this.mini_program.map(item => {
+            if (item.app_id !== '') {
+              i += 1;
+            }
           });
+          if (i < 1) {
+            this.$message({
+              type: 'info',
+              message: '缺少必要参数'
+            });
+          } else {
+            this.is_common = true;
+            Promise.all(this.selectFeaturesItem(this.p_id, this.features_id), this.saveMiniProgramJump()).then(() => {
+              location.reload();
+            }).catch(() => {
+              setTimeout(() => {
+                location.reload();
+              }, 1500);
+            });
+          }
         }
       },
       // 修改选择功能
@@ -606,6 +779,184 @@
       },
       introduceHandler() {
         this.userGuideUrl && window.open(this.userGuideUrl, '_blank');
+      },
+      lookVersionInfo(item) {
+        // todo  查看新版本说明
+        this.$alert(item.code_update_info.version_desc, '版本说明', {
+          confirmButtonText: '确定'
+        });
+      },
+      cancleVersion(item) {
+        // todo 取消审核
+        wxManager.cancleaudit(
+          {
+            id: item.id
+          }
+        ).then(() => {
+          location.reload();
+        });
+      },
+      refusalInfo(item) {
+        // todo 查看审核不通过原因
+      },
+      editNote(item) {
+        // todo 编辑通知人
+        this.up_id = item.id;
+        wxManager.getnoticeconfig(
+          {
+            id: item.id
+          }
+        ).then((res) => {
+          this.phoneList = res.data.phone || [];
+          this.phoneList = this.phoneList.map(item => {
+            return {
+              phone: item
+            };
+          });
+          this.ddList = res.data.ding_url || [];
+          this.ddList = this.ddList.map(item => {
+            return {
+              link: item
+            };
+          });
+          this.noteDialog = true;
+        });
+      },
+      lookCode(item) {
+        // todo 获取体验码
+        wxManager.qrcode(
+          {
+            id: item.id || this.up_id
+          }
+        ).then((res) => {
+          window.open(res.data);
+        });
+      },
+      updateGrade() {
+        wxManager.upgrade({
+          id: this.features_id
+        }).then(res => {
+          if (res.data.status * 1 === 1) {
+            this.dialogFeatures = false;
+            this.active = 0;
+            this.features_id = null;
+          } else {
+            this.$message({
+              type: 'info',
+              message: '更新失败'
+            });
+          }
+          location.reload();
+        }).catch(() => {
+          // setTimeout(() => {
+          //   location.reload();
+          // }, 1500);
+        });
+      },
+      // 回退版本
+      rollBack() {
+        wxManager.roolBack(
+          {
+            id: this.up_id
+          }
+        ).then(() => {
+          this.active = 0;
+          this.up_id = null;
+          location.reload();
+        });
+      },
+      delLine(index) {
+        if (this.phoneList.length > 1) {
+          this.phoneList.splice(index, 1);
+        }
+      },
+      addLine(num) {
+        if (!this.phoneList[num].phone) {
+          this.$message.error('请填写手机号');
+        } else {
+          this.phoneList.push({
+            phone: ''
+          });
+        }
+      },
+      delddLine(index) {
+        if (this.ddList.length > 1) {
+          this.ddList.splice(index, 1);
+        }
+      },
+      addddLine(num) {
+        if (!this.ddList[num].link) {
+          this.$message.error('请填写钉钉聊天链接');
+        } else {
+          this.ddList.push({
+            link: ''
+          });
+        }
+      },
+      noteSure() {
+        function validate(data) {
+          if (!data.phone) return true;
+          return false;
+        }
+        function validateDingtalk(data) {
+          if (!data.link) return true;
+          return false;
+        }
+        const isIllegality = this.phoneList.some(validate) || this.ddList.some(validateDingtalk);
+        if (isIllegality) {
+          this.$message.warning('请检查是否有手机号或钉钉链接未填写');
+        } else {
+          this.noteDialog = false;
+          const phone = this.phoneList.map(item => {
+            return item.phone;
+          });
+          const ding = this.ddList.map(item => {
+            return item.link;
+          });
+          wxManager.setnoticeconfig(
+            {
+              id: this.up_id,
+              phone,
+              ding_url: ding
+            }
+          ).then(() => {
+            this.active = 0;
+            this.up_id = null;
+            location.reload();
+          });
+        }
+        // todo 通知确定
+      },
+      updateLog(item) {
+        this.up_id = item.id;
+        this.pageIndex = 1;
+        this.dialogLog = true;
+        this.getLogData();
+      },
+      sizeChangeHandler(size) {
+        this.pageSize = size;
+        this.pageIndex = 1;
+        this.getLogData();
+      },
+      pageChangeHandler(page) {
+        this.pageIndex = page;
+        this.getLogData();
+      },
+      getLogData() {
+        wxManager.updatelog({
+          id: this.up_id,
+          page_index: this.pageIndex,
+          page_size: this.pageSize
+        }).then(res => {
+          this.tableData = res.data && res.data.result;
+          this.tableData = (this.tableData || []).map(item => {
+            return {
+              ...item,
+              create_time: parseTime(item.create_time)
+            };
+          });
+          this.totalCount = ~~res.data.totalCount;
+        });
       }
     }
   };

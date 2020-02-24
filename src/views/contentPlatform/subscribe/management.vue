@@ -11,9 +11,6 @@
           <el-form-item label="订阅平台">
             <el-select v-model="searchKey.platform" placeholder="订阅平台">
               <el-option label="微信公众号" value="1"></el-option>
-              <el-option label="网站" value="2"></el-option>
-              <el-option label="头条" value="3"></el-option>
-              <el-option label="微博" value="4"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="名称">

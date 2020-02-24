@@ -9,7 +9,6 @@ export default {
     title: 'assist',
     icon: 'tool'
   },
-  alwaysShow: true,
   children: [
     { path: 'template',
       component: blankLayout,
@@ -88,35 +87,6 @@ export default {
               hidden: true
             }
           ]
-        }
-      ]
-    },
-    {
-      path: 'aldDataView',
-      component: blankLayout,
-      meta: {
-        title: 'aldDataView'
-      },
-      children: [
-        {
-          path: 'index',
-          component: () => import('@/views/ald/dataView/index'),
-          name: 'fightGroupDataView',
-          meta: { title: 'aldDataView', noCache: true }
-        },
-        {
-          path: 'dataViewSetting',
-          component: () => import('@/views/ald/dataView/dataViewSetting'),
-          name: 'fightGroupDataViewSetting',
-          meta: { title: 'dataViewSetting' },
-          hidden: true
-        },
-        {
-          path: ':id',
-          component: () => import('@/views/ald/dataView/dataViewSetting'),
-          name: 'fightGroupDataViewModify',
-          meta: { title: 'dataViewModify' },
-          hidden: true
         }
       ]
     }

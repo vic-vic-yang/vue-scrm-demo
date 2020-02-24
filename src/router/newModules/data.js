@@ -7,14 +7,12 @@ export default {
   component: Layout,
   name: 'dataCenter',
   meta: { title: 'dataCenter', icon: 'data' },
-  alwaysShow: true,
   children: [
     {
       path: 'reportSystem',
       name: 'reportSystem',
       component: blankLayout,
       meta: { title: 'reportSystem', icon: 'statement' },
-      alwaysShow: true,
       children: [
         {
           path: 'rewardRecords',

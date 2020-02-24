@@ -1,22 +1,9 @@
 <template>
   <div class="app-container">
-    <el-form :inline="true" ref="queryFrm" :model="queryFrm">
-      <el-form-item prop="goods_name" label="订阅名称">
-        <el-input placeholder="商品名称" v-model="queryFrm.name" clearable></el-input>
-      </el-form-item>
-      <el-form-item prop="supplier" label="订阅平台">
-        <el-select placeholder="全部" clearable v-model="queryFrm.source_type">
-          <el-option v-for="item in platfrom" :key="item.id" :label="item.name" :value="item.id"></el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="searchList" icon="el-icon-search">查询</el-button>
-        <el-button type="primary" @click="$router.push({ name: 'subscribeManagement' });">
-          <i class="fs-13 el-icon-plus mr-5"></i>订阅管理
-        </el-button>
-        <el-button @click="deleteHandler" type="danger">解除</el-button>
-      </el-form-item>
-    </el-form>
+    <div class="control-group">
+      <el-button type="primary" @click="$router.push({ name: 'subscribeManagement' });">订阅管理</el-button>
+      <el-button @click="deleteHandler" type="danger">解除</el-button>
+    </div>
     <custom-el-table
       v-loading="tabLoading"
       v-model="pageIndex"
@@ -34,7 +21,7 @@
 
 <script>
 import customElTable from '@/components/customElTable';
-import { parseTime } from '@/utils/index';
+import {parseTime} from '@/utils/index';
 import API from '@/api/contentPlatform/subscribe';
 
 export default {
@@ -49,28 +36,7 @@ export default {
         platform: '微信公众号',
         keyword: ''
       },
-      queryFrm: {
-        name: '',
-        source_type: ''
-      },
-      platfrom: [
-        {
-          id: 1,
-          name: '微信公众号'
-        },
-        {
-          id: 2,
-          name: '网站'
-        },
-        {
-          id: 3,
-          name: '头条'
-        },
-        {
-          id: 4,
-          name: '微博'
-        }
-      ],
+      query: null,
       tableOptions: [
         {
           label: '',
@@ -124,11 +90,19 @@ export default {
   },
   methods: {
     getData() {
+      this.tableData = [
+        {
+          id: 1,
+          name: '张三',
+          nickname: '微信昵称',
+          phone: '12312312321',
+          address: '成都市武侯区天府二街'
+        }
+      ];
       this.tabLoading = true;
       API.subscribed({
         pageIndex: this.pageIndex,
-        pageSize: this.pageSize,
-        ...this.queryFrm
+        pageSize: this.pageSize
       })
         .then(data => {
           this.dataChange(data.result); // 转换数据
@@ -150,15 +124,6 @@ export default {
         switch (item.source_type) {
           case '1':
             item.source_type = '微信公众号';
-            break;
-          case '2':
-            item.source_type = '网站';
-            break;
-          case '3':
-            item.source_type = '头条';
-            break;
-          case '4':
-            item.source_type = '微博';
             break;
         }
         switch (item.publish_type) {
@@ -216,20 +181,21 @@ export default {
       }).then(() => {
         API.delete({
           gather_id: gather_id
-        }).then(res => {
-          if (res.success) {
-            this.$message({
-              type: 'success',
-              message: '解除成功!'
-            });
-            this.getData(); // 重新拉数据
-          } else {
-            this.$message({
-              type: 'error',
-              message: '解除失败!'
-            });
-          }
-        });
+        })
+          .then(res => {
+            if (res.success) {
+              this.$message({
+                type: 'success',
+                message: '解除成功!'
+              });
+              this.getData(); // 重新拉数据
+            } else {
+              this.$message({
+                type: 'error',
+                message: '解除失败!'
+              });
+            }
+          });
       });
     },
     sizeChangeHandler(size) {
@@ -239,10 +205,6 @@ export default {
     },
     pageChangeHandler(page) {
       this.pageIndex = page;
-      this.getData();
-    },
-    searchList() {
-      this.pageIndex = 1;
       this.getData();
     }
   }

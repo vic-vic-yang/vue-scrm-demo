@@ -13,7 +13,7 @@ const tagsView = {
     ADD_CACHED_VIEW: (state, view) => {
       if (state.cachedViews.includes(view.name)) return;
       if (!view.meta.noCache) {
-        state.cachedViews = [view.name];
+        state.cachedViews.push(view.name);
       }
     },
     DEL_VISITED_VIEWS: (state, view) => {

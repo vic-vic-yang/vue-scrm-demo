@@ -31,7 +31,12 @@
           <el-radio :label="0">否</el-radio>
         </el-radio-group>
       </el-form-item>
-
+      <el-form-item prop="open_lottery" label="是否展示日历入口">
+        <el-radio-group v-model="configureFrm.open_calendar">
+          <el-radio :label="1">是</el-radio>
+          <el-radio :label="0">否</el-radio>
+        </el-radio-group>
+      </el-form-item>
       <el-form-item>
         <el-button @click.prevent.stop="$router.back()">取消</el-button>
         <el-button type="primary" @click.prevent.stop="save">保存</el-button>
@@ -53,7 +58,8 @@
           found_page_type: 1,
           activity: [],
           activity_list: [],
-          open_lottery: 0
+          open_lottery: 0,
+          open_calendar: 0
         },
         activityOptions: [],
         frmRules: {
@@ -85,6 +91,7 @@
         ACTIVITY_API.getConfig().then(res => {
           res.data.found_page_type = Number(res.data.found_page_type);
           res.data.open_lottery = Number(res.data.open_lottery);
+          res.data.open_calendar = Number(res.data.open_calendar || 0);
           this.configureFrm = _.assign({}, this.configureFrm, res.data);
           this.configureFrm.activity = this.configureFrm.activity_list.map(item => {
             return item.activity_id;

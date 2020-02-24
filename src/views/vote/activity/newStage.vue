@@ -91,18 +91,18 @@
             value: '默认',
             label: '默认'
           },
-          // {
-          //   value: '初赛',
-          //   label: '初赛'
-          // },
-          // {
-          //   value: '复赛',
-          //   label: '复赛'
-          // },
-          // {
-          //   value: '决赛',
-          //   label: '决赛'
-          // }
+          {
+            value: '初赛',
+            label: '初赛'
+          },
+          {
+            value: '复赛',
+            label: '复赛'
+          },
+          {
+            value: '决赛',
+            label: '决赛'
+          }
         ],
         pickerOptions: {
           disabledDate(time) {

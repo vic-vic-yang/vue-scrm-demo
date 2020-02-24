@@ -8,7 +8,6 @@ export default {
     title: 'giftCenter',
     icon: 'award'
   },
-  alwaysShow: true,
   children: [
     // 奖品管理
     {

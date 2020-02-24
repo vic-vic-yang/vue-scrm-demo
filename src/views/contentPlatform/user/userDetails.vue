@@ -3,7 +3,7 @@
     <detail-card title="基础信息">
       <div class="item-detail-content">
         <p>姓名 : {{ userDetail.user_name ? userDetail.user_name : '--' }}</p>
-        <p>{{userDetail.source === 'wb' ? '微博' : '微信'}}昵称 : {{ userDetail.nickname ? userDetail.nickname : '--' }}</p>
+        <p>微信昵称 : {{ userDetail.nickname ? userDetail.nickname : '--' }}</p>
         <span>手机号码 :</span>
         <div class="item-detail">
         <p v-for="(item, index) of userDetail.contacts" :key="index">{{ item.phone ? item.phone : ' --' }}</p>

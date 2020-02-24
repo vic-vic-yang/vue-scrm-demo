@@ -35,7 +35,7 @@
               <el-pagination
                 v-loading="channeifiCation_page_info.tabLoading"
                 :page-size="channeifiCation_page_info.pageSize"
-                :pager-count="selectSize"
+                :pager-count="Math.ceil(channeifiCation_page_info.totalCount / channeifiCation_page_info.pageSize)"
                 :current-page="channeifiCation_page_info.pageIndex"
                 @current-change="currentChangechannel"
                 layout="prev, pager, next"
@@ -66,7 +66,7 @@
               <el-pagination
                 v-loading="classifiCation_page_info.tabLoading"
                 :page-size="classifiCation_page_info.pageSize"
-                :pager-count="selectSize"
+                :pager-count="Math.ceil(classifiCation_page_info.totalCount / classifiCation_page_info.pageSize)"
                 :current-page="classifiCation_page_info.pageIndex"
                 @current-change="currentChangeClass"
                 layout="prev, pager, next"
@@ -123,7 +123,7 @@
         </el-form-item>
         <el-form-item>
           <el-dropdown @command="createContent">
-            <el-button operate="" type="primary">
+            <el-button type="primary">
               <i class="fs-13 el-icon-plus mr-5"></i>添加内容
             </el-button>
             <el-dropdown-menu slot="dropdown">
@@ -137,19 +137,19 @@
     <div class="control-group">
       <el-form :inline="true">
         <el-form-item>
-          <el-button perate="" @click="globalOperation(1)" type="primary">发布</el-button>
+          <el-button @click="globalOperation(1)" type="primary">发布</el-button>
         </el-form-item>
         <el-form-item>
-          <el-button perate="" @click="globalOperation(2)" type="info">撤销</el-button>
+          <el-button @click="globalOperation(2)" type="info">撤销</el-button>
         </el-form-item>
         <el-form-item>
-          <el-button operate="" @click="globalOperation(3)" type="primary">推荐</el-button>
+          <el-button @click="globalOperation(3)" type="primary">推荐</el-button>
         </el-form-item>
         <el-form-item>
-          <el-button operate="" @click="globalOperation(4)" type="info">取消推荐</el-button>
+          <el-button @click="globalOperation(4)" type="info">取消推荐</el-button>
         </el-form-item>
         <el-form-item>
-          <el-button operate="" @click="globalOperation(5)" type="danger">删除</el-button>
+          <el-button @click="globalOperation(5)" type="danger">删除</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -185,7 +185,6 @@
     },
     data() {
       return {
-        selectSize: 5,
         tableOptions: [
           {
             label: '编号',
@@ -249,12 +248,10 @@
                 label: '更多操作',
                 operations: [
                   {
-                    prop: 'top_cn',
-                    operate: ''
+                    prop: 'top_cn'
                   },
                   {
-                    prop: 'recommend_cn',
-                    operate: ''
+                    prop: 'recommend_cn'
                   },
                   '查看评论'
                 ]
@@ -606,15 +603,13 @@
         if (!item) {
           return {
             btn: 'info',
-            label: '撤销',
-            operate: 'publish'
+            label: '撤销'
           };
         }
         const status = item.status * 1;
         return {
           btn: status === 0 ? 'primary' : 'info',
-          label: status === 0 ? '发布' : '撤销',
-          operate: status === 0 ? 'publish' : 'cancel'
+          label: status === 0 ? '发布' : '撤销'
         };
       },
       // 修改权重
